@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import portfolioRoutes from "./routes/portfolioRoutes.js";
 import mlRoutes from "./routes/mlRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
+import dotenv from "dotenv";
 
 dotenv.config();
 connectDB();
@@ -26,6 +27,4 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
