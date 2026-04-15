@@ -3,15 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
+    "start": "node server.js",
     "seed": "node seed/seed100.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@google/genai": "^1.49.0",
     "@tensorflow/tfjs": "^4.22.0",
