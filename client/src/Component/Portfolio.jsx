@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_BASE_URL =
-  "https://crypto-mern-q442.onrender.com/api/auth/register/api";
+const API_BASE_URL = "https://crypto-mern-q442.onrender.com/api";
 
 function Portfolio() {
   const [investments, setInvestments] = useState([]);
