@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import portfolioRoutes from "./routes/portfolioRoutes.js";
 import mlRoutes from "./routes/mlRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
+import newsRoutes from "./routes/newsRoutes.js";
 
 // ✅ Load env variables
 dotenv.config();
@@ -16,6 +17,7 @@ const app = express();
 // ✅ Middleware
 app.use(cors());
 app.use(express.json());
+app.use("/api/news", newsRoutes);
 
 // ✅ Routes
 app.use("/api/auth", authRoutes);
