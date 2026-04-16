@@ -36,17 +36,20 @@ export default function AuthContainer() {
       }
 
       try {
-        const response = await fetch("http://localhost:5000/api/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "https://crypto-mern-q442.onrender.com/api/auth/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: formData.name,
+              email: formData.email,
+              password: formData.password,
+            }),
           },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          }),
-        });
+        );
 
         const data = await response.json();
 
@@ -90,9 +93,7 @@ export default function AuthContainer() {
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#0a1f2c] to-[#0e2a3a] p-4">
-      
       <div className="flex w-full max-w-6xl rounded-3xl overflow-hidden shadow-2xl">
-
         {/* LEFT SIDE (Illustration Area) */}
         <div className="hidden lg:flex w-1/2 bg-[#0f2a3a] items-center justify-center relative">
           <div className="text-blue-300 text-center px-10">
@@ -110,7 +111,6 @@ export default function AuthContainer() {
 
         {/* RIGHT SIDE (Form) */}
         <div className="w-full lg:w-1/2 bg-[#0d2433] text-white p-10">
-
           <h2 className="text-3xl font-semibold mb-2">
             {isLoginView ? "Login" : "Create Account"}
           </h2>
@@ -127,7 +127,6 @@ export default function AuthContainer() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-
             {!isLoginView && (
               <input
                 type="text"

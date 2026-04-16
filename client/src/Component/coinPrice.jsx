@@ -56,7 +56,7 @@ export default function Dashboard() {
       setPredictionResult(null);
 
       const response = await fetch(
-        "http://localhost:5000/api/ml/predict/bitcoin",
+        "https://crypto-mern-q442.onrender.com/api/auth/register/api/ml/predict/bitcoin",
       );
       const resData = await response.json();
 

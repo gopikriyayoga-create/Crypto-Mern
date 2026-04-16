@@ -129,10 +129,13 @@ export default function CryptoDashboard() {
     setGeminiAnalysis("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/gemini/analyze", {
-        gainers,
-        losers,
-      });
+      const res = await axios.post(
+        "https://crypto-mern-q442.onrender.com/api/auth/register/api/gemini/analyze",
+        {
+          gainers,
+          losers,
+        },
+      );
 
       setGeminiAnalysis(res.data.analysis);
       setIsDrawerOpen(true);

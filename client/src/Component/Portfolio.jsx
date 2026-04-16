@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL =
+  "https://crypto-mern-q442.onrender.com/api/auth/register/api";
 
 function Portfolio() {
   const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -14,14 +15,14 @@ function Portfolio() {
     coinId: "",
     quantity: "",
     purchasePrice: "",
-    date: ""
+    date: "",
   });
 
   const getHeaders = () => {
     const token = localStorage.getItem("token"); // Assuming standard token storage from the recent login tasks
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     };
   };
 
@@ -29,10 +30,10 @@ function Portfolio() {
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/portfolio`, {
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (!response.ok) throw new Error("Failed to fetch portfolio");
-      
+
       const data = await response.json();
       setInvestments(data);
       setError(null);
@@ -62,7 +63,7 @@ function Portfolio() {
       coinId: inv.coinId,
       quantity: inv.quantity,
       purchasePrice: inv.purchasePrice,
-      date: inv.date ? new Date(inv.date).toISOString().split('T')[0] : ""
+      date: inv.date ? new Date(inv.date).toISOString().split("T")[0] : "",
     });
     setEditingId(inv._id);
     setIsModalOpen(true);
@@ -77,21 +78,21 @@ function Portfolio() {
     e.preventDefault();
     try {
       const method = editingId ? "PUT" : "POST";
-      const endpoint = editingId 
-        ? `${API_BASE_URL}/portfolio/${editingId}` 
+      const endpoint = editingId
+        ? `${API_BASE_URL}/portfolio/${editingId}`
         : `${API_BASE_URL}/portfolio`;
-        
+
       const response = await fetch(endpoint, {
         method,
         headers: getHeaders(),
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-      
+
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.message || "Failed to save investment");
       }
-      
+
       closeModal();
       fetchPortfolio();
     } catch (err) {
@@ -100,14 +101,15 @@ function Portfolio() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this investment?")) return;
+    if (!window.confirm("Are you sure you want to delete this investment?"))
+      return;
     try {
       const response = await fetch(`${API_BASE_URL}/portfolio/${id}`, {
         method: "DELETE",
-        headers: getHeaders()
+        headers: getHeaders(),
       });
       if (!response.ok) throw new Error("Failed to delete investment");
-      
+
       fetchPortfolio();
     } catch (err) {
       alert("Error deleting: " + err.message);
@@ -115,7 +117,10 @@ function Portfolio() {
   };
 
   // Calculate totals
-  const totalInvested = investments.reduce((acc, curr) => acc + (curr.quantity * curr.purchasePrice), 0);
+  const totalInvested = investments.reduce(
+    (acc, curr) => acc + curr.quantity * curr.purchasePrice,
+    0,
+  );
 
   if (loading && investments.length === 0) {
     return <div className="text-white p-6">Loading portfolio...</div>;
@@ -125,10 +130,14 @@ function Portfolio() {
     <div className="p-6 text-white min-h-screen w-full">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text  bg-linear-to-r text-orange-600">My Portfolio</h1>
-          <p className="text-gray-400 mt-2">Manage your crypto investments manually</p>
+          <h1 className="text-3xl font-bold bg-clip-text  bg-linear-to-r text-orange-600">
+            My Portfolio
+          </h1>
+          <p className="text-gray-400 mt-2">
+            Manage your crypto investments manually
+          </p>
         </div>
-        <button 
+        <button
           onClick={openAddModal}
           className="bg-linear-to-r from-orange-400 to-orange-600 hover:from-orange-400 hover:to-blue-500 text-white font-semibold py-2 px-6 rounded-xl transition-all shadow-lg hover:shadow-cyan-500/25"
         >
@@ -144,9 +153,15 @@ function Portfolio() {
 
       {/* Summary Card */}
       <div className="bg-[#151a2e] rounded-2xl p-6 border border-gray-800/50 mb-8 w-fit shadow-2xl">
-        <h3 className="text-orange-400 text-sm font-medium mb-1">Total Invested Value</h3>
+        <h3 className="text-orange-400 text-sm font-medium mb-1">
+          Total Invested Value
+        </h3>
         <p className="text-4xl font-bold font-mono text-cyan-400">
-          ${totalInvested.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          $
+          {totalInvested.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </p>
       </div>
 
@@ -157,8 +172,12 @@ function Portfolio() {
             <tr className="bg-[#0f1323] border-b border-gray-800/50 text-orange-400 text-sm tracking-wider">
               <th className="p-4 font-medium uppercase">Coin</th>
               <th className="p-4 font-medium uppercase text-right">Quantity</th>
-              <th className="p-4 font-medium uppercase text-right">Purchase Price</th>
-              <th className="p-4 font-medium uppercase text-right">Total Value</th>
+              <th className="p-4 font-medium uppercase text-right">
+                Purchase Price
+              </th>
+              <th className="p-4 font-medium uppercase text-right">
+                Total Value
+              </th>
               <th className="p-4 font-medium uppercase text-center">Actions</th>
             </tr>
           </thead>
@@ -171,37 +190,71 @@ function Portfolio() {
               </tr>
             ) : (
               investments.map((inv) => (
-                <tr key={inv._id} className="hover:bg-[#1a2138] transition-colors">
+                <tr
+                  key={inv._id}
+                  className="hover:bg-[#1a2138] transition-colors"
+                >
                   <td className="p-4 font-medium flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold uppercase">
                       {inv.coinId.charAt(0)}
                     </div>
                     <span className="capitalize">{inv.coinId}</span>
                   </td>
-                  <td className="p-4 text-right font-mono text-gray-300">{inv.quantity}</td>
                   <td className="p-4 text-right font-mono text-gray-300">
-                    ${inv.purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {inv.quantity}
+                  </td>
+                  <td className="p-4 text-right font-mono text-gray-300">
+                    $
+                    {inv.purchasePrice.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                    })}
                   </td>
                   <td className="p-4 text-right font-mono font-medium text-cyan-400">
-                    ${(inv.quantity * inv.purchasePrice).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    $
+                    {(inv.quantity * inv.purchasePrice).toLocaleString(
+                      "en-US",
+                      { minimumFractionDigits: 2 },
+                    )}
                   </td>
                   <td className="p-4 flex justify-center gap-3">
-                    <button 
+                    <button
                       onClick={() => openEditModal(inv)}
                       className="text-blue-400 hover:text-blue-300 transition-colors p-2 bg-blue-500/10 rounded-lg"
                       title="Edit"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                        />
                       </svg>
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(inv._id)}
                       className="text-red-400 hover:text-red-300 transition-colors p-2 bg-red-500/10 rounded-lg"
                       title="Delete"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
                       </svg>
                     </button>
                   </td>
@@ -216,24 +269,37 @@ function Portfolio() {
       {isModalOpen && (
         <div className="fixed inset-0 min-h-screen bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 text-white">
           <div className="bg-[#151a2e] rounded-2xl w-full max-w-md border border-gray-800 shadow-2xl p-6 relative">
-            <button 
+            <button
               onClick={closeModal}
               className="absolute top-4 right-4 text-gray-400 hover:text-white bg-gray-800/50 hover:bg-gray-700/50 p-1.5 rounded-lg transition-colors"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <span className="w-2 h-8 bg-orange-600 rounded-full inline-block"></span>
               {editingId ? "Edit Investment" : "Add Investment"}
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Coin ID (e.g. bitcoin, ethereum)</label>
-                <input 
-                  type="text" 
+                <label className="block text-sm font-medium text-gray-400 mb-1">
+                  Coin ID (e.g. bitcoin, ethereum)
+                </label>
+                <input
+                  type="text"
                   name="coinId"
                   value={formData.coinId}
                   onChange={handleChange}
@@ -242,12 +308,14 @@ function Portfolio() {
                   placeholder="bitcoin"
                 />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Quantity</label>
-                  <input 
-                    type="number" 
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
                     name="quantity"
                     step="any"
                     value={formData.quantity}
@@ -257,11 +325,13 @@ function Portfolio() {
                     placeholder="0.00"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Price per Coin ($)</label>
-                  <input 
-                    type="number" 
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    Price per Coin ($)
+                  </label>
+                  <input
+                    type="number"
                     name="purchasePrice"
                     step="any"
                     value={formData.purchasePrice}
@@ -274,25 +344,27 @@ function Portfolio() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Date (Optional)</label>
-                <input 
-                  type="date" 
+                <label className="block text-sm font-medium text-gray-400 mb-1">
+                  Date (Optional)
+                </label>
+                <input
+                  type="date"
                   name="date"
                   value={formData.date}
                   onChange={handleChange}
                   className="w-full bg-[#0f1323] border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm color-scheme-dark"
                 />
               </div>
-              
+
               <div className="pt-4 flex gap-3">
-                <button 
+                <button
                   type="button"
                   onClick={closeModal}
                   className="flex-1 bg-transparent border border-gray-700 text-gray-300 hover:bg-gray-800 font-semibold py-3 px-4 rounded-xl transition-all"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="flex-1 bg-linear-to-r from-orange-400 to-orange-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-lg hover:shadow-cyan-500/25"
                 >
