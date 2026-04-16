@@ -66,7 +66,7 @@ export default function AuthContainer() {
     } else {
       try {
         const response = await fetch(
-          "https://crypto-mern-q442.onrender.com/api/auth/register/auth/login",
+          "https://crypto-mern-q442.onrender.com/api/auth/login",
           {
             method: "POST",
             headers: {
