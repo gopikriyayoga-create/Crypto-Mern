@@ -6,14 +6,24 @@ const router = express.Router();
 // ✅ GET /api/news
 router.get("/", async (req, res) => {
   try {
-    // 🔵 Try NewsAPI first
+    // 🔐 Validate API key
+    if (!process.env.NEWS_API_KEY) {
+      throw new Error("Missing NEWS_API_KEY");
+    }
+
+    // 🔵 Try NewsAPI
     const newsRes = await fetch(
       `https://newsapi.org/v2/everything?q=cryptocurrency&sortBy=publishedAt&language=en&pageSize=12&apiKey=${process.env.NEWS_API_KEY}`,
     );
 
+    // ❗ Check HTTP status
+    if (!newsRes.ok) {
+      throw new Error(`NewsAPI failed with status ${newsRes.status}`);
+    }
+
     const newsData = await newsRes.json();
 
-    if (newsData.articles && newsData.articles.length > 0) {
+    if (Array.isArray(newsData.articles) && newsData.articles.length > 0) {
       const formatted = newsData.articles.map((item, index) => ({
         id: index,
         title: item.title || "No Title",
@@ -21,8 +31,8 @@ router.get("/", async (req, res) => {
         imageurl: item.urlToImage || "",
         url: item.url,
         published_on: item.publishedAt
-          ? new Date(item.publishedAt).getTime() / 1000
-          : Date.now() / 1000,
+          ? Math.floor(new Date(item.publishedAt).getTime() / 1000)
+          : Math.floor(Date.now() / 1000),
         source_info: { name: item.source?.name || "News" },
         categories: "Crypto|Market",
       }));
@@ -30,9 +40,10 @@ router.get("/", async (req, res) => {
       return res.json(formatted);
     }
 
-    throw new Error("NewsAPI failed");
+    throw new Error("NewsAPI returned empty");
   } catch (err) {
     console.warn("⚠️ NewsAPI failed → fallback to CryptoCompare");
+    console.warn("Reason:", err.message);
 
     try {
       // 🟡 Fallback → CryptoCompare
@@ -40,26 +51,31 @@ router.get("/", async (req, res) => {
         "https://min-api.cryptocompare.com/data/v2/news/?lang=EN",
       );
 
+      if (!fallbackRes.ok) {
+        throw new Error(`CryptoCompare failed: ${fallbackRes.status}`);
+      }
+
       const fallbackData = await fallbackRes.json();
 
-      if (fallbackData?.Data && Array.isArray(fallbackData.Data)) {
+      if (Array.isArray(fallbackData?.Data)) {
         const formatted = fallbackData.Data.slice(0, 12).map((item, index) => ({
           id: index,
-          title: item.title,
-          body: item.body,
-          imageurl: item.imageurl,
+          title: item.title || "No Title",
+          body: item.body || "No description available",
+          imageurl: item.imageurl || "",
           url: item.url,
-          published_on: item.published_on,
-          source_info: { name: item.source_info?.name },
-          categories: item.categories,
+          published_on: item.published_on || Math.floor(Date.now() / 1000),
+          source_info: { name: item.source_info?.name || "News" },
+          categories: item.categories || "Crypto",
         }));
 
         return res.json(formatted);
       }
 
-      throw new Error("Fallback failed");
+      throw new Error("Fallback returned invalid data");
     } catch (error) {
-      console.error("❌ All APIs failed:", error);
+      console.error("❌ All APIs failed:", error.message);
+
       return res.status(500).json({
         message: "Unable to fetch news",
       });
